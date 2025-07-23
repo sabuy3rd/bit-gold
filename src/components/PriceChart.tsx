@@ -12,11 +12,33 @@ interface PriceChartProps {
 }
 
 export default function PriceChart({ data, title, color }: PriceChartProps) {
-  const chartData = data.map(([timestamp, price]) => ({
-    time: timestamp,
-    price: price,
-    formattedTime: format(new Date(timestamp), 'dd/MM', { locale: th }),
-  }));
+  // Handle case where data might be undefined or empty
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return (
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold">
+            กราฟราคา {title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-64 w-full flex items-center justify-center">
+            <p className="text-muted-foreground">ไม่มีข้อมูลกราฟ</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const chartData = data.map(([timestamp, price]) => {
+    const date = new Date(timestamp);
+    return {
+      time: timestamp,
+      price: price,
+      formattedTime: format(date, 'HH:mm', { locale: th }),
+      fullTime: format(date, 'dd/MM HH:mm', { locale: th }),
+    };
+  });
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('th-TH', {
@@ -53,9 +75,10 @@ export default function PriceChart({ data, title, color }: PriceChartProps) {
               <Tooltip
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
+                    const dataPoint = chartData.find(d => d.formattedTime === label);
                     return (
                       <div className="bg-background border rounded-lg p-2 shadow-md">
-                        <p className="text-sm font-medium">{`วันที่: ${label}`}</p>
+                        <p className="text-sm font-medium">{`เวลา: ${dataPoint?.fullTime || label}`}</p>
                         <p className="text-sm" style={{ color: color }}>
                           {`ราคา: ${formatPrice(payload[0].value as number)}`}
                         </p>

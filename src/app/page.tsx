@@ -32,8 +32,8 @@ export default function Home() {
       const [bitcoinRes, goldRes, bitcoinHistRes, goldHistRes] = await Promise.all([
         fetch('/api/bitcoin'),
         fetch('/api/gold'),
-        fetch('/api/historical?symbol=bitcoin&days=7'),
-        fetch('/api/historical?symbol=gold&days=7'),
+        fetch('/api/historical?symbol=bitcoin&timeframe=minute&hours=6'),
+        fetch('/api/historical?symbol=gold&timeframe=minute&hours=6'),
       ]);
 
       const [bitcoinData, goldData, bitcoinHistData, goldHistData] = await Promise.all([
@@ -63,8 +63,8 @@ export default function Home() {
   useEffect(() => {
     fetchData();
     
-    // Refresh data every 5 minutes
-    const interval = setInterval(fetchData, 5 * 60 * 1000);
+    // Refresh data every 30 seconds
+    const interval = setInterval(fetchData, 30 * 1000);
     return () => clearInterval(interval);
   }, []);
 

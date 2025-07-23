@@ -7,7 +7,7 @@ import { TrendingUp, TrendingDown, Bitcoin, Coins } from 'lucide-react';
 interface PriceCardProps {
   title: string;
   price: number;
-  change24h: number;
+  change24h?: number; // Made optional
   currency: string;
   icon: 'bitcoin' | 'gold';
   unit?: string;
@@ -16,7 +16,7 @@ interface PriceCardProps {
 export default function PriceCard({ 
   title, 
   price, 
-  change24h, 
+  change24h = 0, // Default value to prevent undefined errors
   icon,
   unit 
 }: PriceCardProps) {
